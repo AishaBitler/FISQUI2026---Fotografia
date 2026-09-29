@@ -1,0 +1,1990 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Da luz à fotografia</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Aplica o tema salvo antes de renderizar (evita "piscar") -->
+    <script>
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+    <style>
+      /* ===== Variáveis de tema (escuro por padrão; claro via preferência do sistema ou data-theme) ===== */
+      :root {
+        --bg: #0c2340;
+        --bg2: #12325a;
+        --fg: #f2efe6;
+        --mut: #a9bad0;
+        --ac: #f2a93b;
+        --line: rgba(242, 239, 230, 0.18);
+        --card: rgba(255, 255, 255, 0.05);
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: light) {
+        :root:not([data-theme='dark']) {
+          --bg: #f2efe6;
+          --bg2: #e6e1d2;
+          --fg: #0c2340;
+          --mut: #44597a;
+          --ac: #b8690a;
+          --line: rgba(12, 35, 64, 0.2);
+          --card: rgba(12, 35, 64, 0.05);
+        }
+      }
+      :root[data-theme='light'] {
+        --bg: #f2efe6;
+        --bg2: #e6e1d2;
+        --fg: #0c2340;
+        --mut: #44597a;
+        --ac: #b8690a;
+        --line: rgba(12, 35, 64, 0.2);
+        --card: rgba(12, 35, 64, 0.05);
+      }
+      /* ===== Base e tipografia ===== */
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 70px;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font:
+          400 1.05rem/1.65 'DM Sans',
+          system-ui,
+          sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: Fraunces, Georgia, serif;
+        line-height: 1.1;
+        margin: 0 0 0.5em;
+      }
+      h2 {
+        font-size: clamp(2rem, 5vw, 3.4rem);
+      }
+      h3 {
+        font-size: 1.35rem;
+      }
+      p {
+        max-width: 62ch;
+        margin: 0 0 1em;
+      }
+      /* ===== Navegação e barra de progresso ===== */
+      nav {
+        position: sticky;
+        top: env(safe-area-inset-top, 0px);
+        z-index: 9;
+        display: flex;
+        gap: 1.2rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 0.8rem 1rem;
+        background: color-mix(in srgb, var(--bg) 85%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+        font-size: 0.92rem;
+      }
+      nav a {
+        color: var(--mut);
+        text-decoration: none;
+      }
+      nav a:hover,
+      nav a:focus-visible {
+        color: var(--ac);
+        outline: none;
+      }
+      #bar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 3px;
+        background: var(--ac);
+        width: 0;
+        z-index: 10;
+      }
+      /* ===== Hero (título inicial) ===== */
+      .hero {
+        min-height: 92vh;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 3rem 1.2rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero h1 {
+        font-size: clamp(2.8rem, 9vw, 6.5rem);
+        position: relative;
+        z-index: 1;
+        animation: rise 1.6s 0.3s both;
+      }
+      .hero p {
+        margin: 0 auto;
+        color: var(--mut);
+        position: relative;
+        z-index: 1;
+        animation: rise 1.6s 0.7s both;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+          letter-spacing: 0.1em;
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      #iris {
+        position: absolute;
+        width: min(90vmin, 760px);
+        opacity: 0.35;
+        animation: spin 40s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      #iris .bl {
+        transform-origin: 200px 200px;
+        animation: blade 6s ease-in-out infinite;
+      }
+      @keyframes blade {
+        50% {
+          transform: rotate(22deg) scale(1.08);
+        }
+      }
+      .hero .flash {
+        position: absolute;
+        inset: 0;
+        background: #fff;
+        animation: fl 1.4s 2s both;
+        pointer-events: none;
+        opacity: 0;
+      }
+      @keyframes fl {
+        0% {
+          opacity: 0;
+        }
+        8% {
+          opacity: 0.85;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      .scroll {
+        position: absolute;
+        bottom: 1.5rem;
+        color: var(--mut);
+        animation: bob 2s infinite;
+      }
+      @keyframes bob {
+        50% {
+          transform: translateY(8px);
+        }
+      }
+      /* ===== Seções, cards e grids ===== */
+      section {
+        padding: 6rem 1.2rem;
+        max-width: 1080px;
+        margin: auto;
+      }
+      .tag {
+        color: var(--ac);
+        font-weight: 700;
+        margin-bottom: 0.4rem;
+        display: block;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2.2rem;
+        align-items: start;
+        margin-top: 2rem;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1.4rem;
+      }
+      .rv {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.9s,
+          transform 0.9s;
+      }
+      .rv.in {
+        opacity: 1;
+        transform: none;
+      }
+      blockquote {
+        margin: 2rem 0 0;
+        padding: 1rem 0 1rem 1.2rem;
+        border-left: 3px solid var(--ac);
+        font:
+          italic 1.35rem/1.4 Fraunces,
+          serif;
+        max-width: 52ch;
+      }
+      .q {
+        margin-top: 3rem;
+        padding: 1.2rem 1.4rem;
+        background: var(--bg2);
+        border-radius: 14px;
+        color: var(--mut);
+      }
+      .q b {
+        color: var(--fg);
+      }
+      canvas,
+      svg.demo {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 10px;
+        background: #000;
+      }
+      .steps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+      /* ===== Botões e controles de formulário ===== */
+      button {
+        font: inherit;
+        background: transparent;
+        color: var(--fg);
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        padding: 0.45rem 1rem;
+        cursor: pointer;
+        transition: 0.25s;
+      }
+      button:hover {
+        border-color: var(--ac);
+      }
+      button[aria-pressed='true'] {
+        background: var(--ac);
+        color: #0c2340;
+        border-color: var(--ac);
+      }
+      button:focus-visible,
+      input:focus-visible {
+        outline: 2px solid var(--ac);
+        outline-offset: 3px;
+      }
+      input[type='range'] {
+        width: 100%;
+        accent-color: var(--ac);
+      }
+      label {
+        display: block;
+        font-size: 0.92rem;
+        color: var(--mut);
+        margin-top: 0.8rem;
+      }
+      /* ===== Estação 1: revelação química, linha do tempo ===== */
+      .wrap {
+        position: relative;
+      }
+      #fog {
+        position: absolute;
+        inset: 0;
+        border-radius: 10px;
+        background: #cfd6c8;
+        transition: opacity 2.5s;
+        pointer-events: none;
+      }
+      #dev {
+        transition: opacity 3.5s ease-in;
+      }
+      .list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .list li {
+        padding: 0.7rem 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .tl {
+        display: grid;
+        gap: 0.9rem;
+        margin-top: 1.4rem;
+      }
+      .tl div {
+        border-left: 2px solid var(--ac);
+        padding-left: 1rem;
+        position: relative;
+      }
+      .tl div::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 0.55rem;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--ac);
+        animation: pulse 2.4s infinite;
+      }
+      @keyframes pulse {
+        50% {
+          box-shadow: 0 0 0 8px transparent;
+          box-shadow: 0 0 0 8px rgba(242, 169, 59, 0.25);
+        }
+      }
+      /* ===== Estação 2 e 3: cena de abertura/obturador e olho x câmera ===== */
+      .scene {
+        height: 170px;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(#5aa9ff, #cfe8ff 60%, #4f8a3c 60%);
+      }
+      .ball {
+        position: absolute;
+        top: 95px;
+        left: 0;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #e24a33;
+        animation: mv 2.2s linear infinite alternate;
+      }
+      @keyframes mv {
+        to {
+          left: calc(100% - 34px);
+        }
+      }
+      .sun {
+        position: absolute;
+        top: 14px;
+        right: 22px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #ffe27a;
+      }
+      .eyewrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .eyewrap .row {
+        padding: 0.55rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        transition: 0.25s;
+        cursor: default;
+      }
+      .eyewrap .row.on {
+        background: var(--ac);
+        color: #0c2340;
+        transform: scale(1.03);
+      }
+      /* ===== Rodapé ===== */
+      .foot {
+        text-align: center;
+        color: var(--mut);
+        padding: 4rem 1rem;
+      }
+      /* ===== Abertura em estilo câmera (#intro) ===== */
+      @property --r {
+        syntax: '<length-percentage>';
+        inherits: false;
+        initial-value: 0%;
+      }
+      body.lock {
+        overflow: hidden;
+      }
+      body.lock .hero,
+      body.lock .hero * {
+        animation-play-state: paused;
+      }
+      #intro {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: #050505;
+        color: #f2efe6;
+        --r: 0%;
+        -webkit-mask-image: radial-gradient(
+          circle at 50% 50%,
+          transparent var(--r),
+          #000 calc(var(--r) + 2px)
+        );
+        mask-image: radial-gradient(circle at 50% 50%, transparent var(--r), #000 calc(var(--r) + 2px));
+        animation: open 0.9s 3.4s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+      }
+      @keyframes open {
+        to {
+          --r: 150%;
+          opacity: 0;
+        }
+      }
+      #intro:not(.go),
+      #intro:not(.go) *,
+      #intro:not(.go) *::before,
+      #intro:not(.go) *::after {
+        animation-play-state: paused !important;
+      }
+      #intro .vw {
+        position: absolute;
+        inset: 0;
+        animation:
+          vin 0.5s both,
+          shk 0.35s 2.6s;
+      }
+      @keyframes vin {
+        from {
+          opacity: 0;
+        }
+      }
+      @keyframes shk {
+        20% {
+          transform: translate(4px, -4px);
+        }
+        50% {
+          transform: translate(-4px, 3px);
+        }
+      }
+      #intro #ic {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        object-fit: cover;
+        animation: fcs 2s 0.4s both;
+      }
+      @keyframes fcs {
+        0% {
+          filter: blur(28px) brightness(0.5);
+        }
+        25% {
+          filter: blur(28px) brightness(0.7);
+        }
+        42% {
+          filter: blur(9px) brightness(0.9);
+        }
+        55% {
+          filter: blur(17px);
+        }
+        70%,
+        100% {
+          filter: blur(0) brightness(1);
+        }
+      }
+      #intro .g3 {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            90deg,
+            transparent 33%,
+            rgba(255, 255, 255, 0.22) 33% calc(33% + 1px),
+            transparent calc(33% + 1px) 66%,
+            rgba(255, 255, 255, 0.22) 66% calc(66% + 1px),
+            transparent calc(66% + 1px)
+          ),
+          linear-gradient(
+            transparent 33%,
+            rgba(255, 255, 255, 0.22) 33% calc(33% + 1px),
+            transparent calc(33% + 1px) 66%,
+            rgba(255, 255, 255, 0.22) 66% calc(66% + 1px),
+            transparent calc(66% + 1px)
+          );
+        box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.75);
+      }
+      #intro .af {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(24vw, 130px);
+        aspect-ratio: 1;
+        margin: calc(min(24vw, 130px) / -2) 0 0 calc(min(24vw, 130px) / -2);
+        border: 2px solid #fff;
+        animation: af 1.9s 0.4s both;
+      }
+      @keyframes af {
+        0% {
+          transform: translate(-22vw, 14vh) scale(1.8);
+          opacity: 0;
+        }
+        15% {
+          opacity: 1;
+        }
+        35% {
+          transform: translate(18vw, -12vh) scale(1.3);
+        }
+        55% {
+          transform: translate(-6vw, 6vh) scale(1.1);
+        }
+        75% {
+          transform: none;
+          border-color: #fff;
+        }
+        80% {
+          border-color: #f2a93b;
+          transform: scale(1.18);
+        }
+        100% {
+          border-color: #f2a93b;
+          transform: none;
+          box-shadow: 0 0 22px rgba(242, 169, 59, 0.6);
+        }
+      }
+      #intro .hud {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(1rem + env(safe-area-inset-top, 0px));
+        display: flex;
+        justify-content: space-between;
+        padding: 0 1.2rem;
+        font:
+          500 0.95rem/1 'DM Sans',
+          sans-serif;
+        letter-spacing: 0.04em;
+      }
+      #intro .hud i {
+        font-style: normal;
+        color: #f2a93b;
+      }
+      #intro .ok {
+        position: absolute;
+        left: 50%;
+        top: calc(50% + min(24vw, 130px) / 2 + 14px);
+        transform: translateX(-50%);
+        color: #f2a93b;
+        font-size: 0.9rem;
+        opacity: 0;
+        white-space: nowrap;
+        animation: fi 0.15s 2.15s forwards;
+      }
+      @keyframes fi {
+        to {
+          opacity: 1;
+        }
+      }
+      #intro .mt {
+        position: absolute;
+        bottom: calc(1.6rem + env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        width: min(70vw, 320px);
+        height: 10px;
+        transform: translateX(-50%);
+        background: repeating-linear-gradient(
+          90deg,
+          rgba(242, 239, 230, 0.7) 0 1px,
+          transparent 1px calc(100% / 6)
+        );
+      }
+      #intro .mk {
+        position: absolute;
+        top: -12px;
+        left: 0;
+        border: 6px solid transparent;
+        border-top-color: #f2a93b;
+        animation: mk 2s 0.4s both;
+      }
+      @keyframes mk {
+        0% {
+          left: 5%;
+        }
+        40% {
+          left: 80%;
+        }
+        60% {
+          left: 20%;
+        }
+        100% {
+          left: 48%;
+        }
+      }
+      #intro .sh {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 0;
+        background: #000;
+        z-index: 2;
+        animation: shut 0.55s 2.6s both;
+      }
+      #intro .sh.t {
+        top: 0;
+      }
+      #intro .sh.b {
+        bottom: 0;
+      }
+      @keyframes shut {
+        0% {
+          height: 0;
+        }
+        25%,
+        55% {
+          height: 50.5%;
+        }
+        100% {
+          height: 0;
+        }
+      }
+      #intro .fl2 {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        background: #fff;
+        opacity: 0;
+        pointer-events: none;
+        animation: fl3 0.7s 2.85s both;
+      }
+      @keyframes fl3 {
+        0% {
+          opacity: 0;
+        }
+        12% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      #intro .sk {
+        position: absolute;
+        z-index: 4;
+        right: 1rem;
+        bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+        font-size: 0.85rem;
+        color: #a9bad0;
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+      /* ===== Faixa animada (marquee) ===== */
+      .mq {
+        position: relative;
+        overflow: hidden;
+        background: var(--ac);
+        color: #0c2340;
+        padding: 1.5rem 0;
+        white-space: nowrap;
+      }
+      .mq::before,
+      .mq::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: repeating-linear-gradient(90deg, #0c2340 0 12px, transparent 12px 24px);
+        opacity: 0.85;
+      }
+      .mq::before {
+        top: 5px;
+      }
+      .mq::after {
+        bottom: 5px;
+      }
+      .mq .tk {
+        display: inline-flex;
+        animation: mq 22s linear infinite;
+      }
+      .mq span {
+        font:
+          700 clamp(1.4rem, 4vw, 2.4rem)/1 Fraunces,
+          Georgia,
+          serif;
+        padding: 0 1.6rem;
+      }
+      .mq span:nth-child(even) {
+        opacity: 0.55;
+      }
+      @keyframes mq {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      /* ===== Título animado do hero (letras e palavras) ===== */
+      .hero h1,
+      .hero p {
+        animation: none;
+      }
+      .ttl {
+        position: relative;
+        padding: 2.2rem 2.6rem;
+        z-index: 1;
+      }
+      .ttl::before {
+        content: '';
+        position: absolute;
+        inset: -70px;
+        pointer-events: none;
+        opacity: 0;
+        background:
+          linear-gradient(var(--ac), var(--ac)) 0 0/34px 3px,
+          linear-gradient(var(--ac), var(--ac)) 0 0/3px 34px,
+          linear-gradient(var(--ac), var(--ac)) 100% 0/34px 3px,
+          linear-gradient(var(--ac), var(--ac)) 100% 0/3px 34px,
+          linear-gradient(var(--ac), var(--ac)) 0 100%/34px 3px,
+          linear-gradient(var(--ac), var(--ac)) 0 100%/3px 34px,
+          linear-gradient(var(--ac), var(--ac)) 100% 100%/34px 3px,
+          linear-gradient(var(--ac), var(--ac)) 100% 100%/3px 34px;
+        background-repeat: no-repeat;
+        animation: lock2 1s 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+      @keyframes lock2 {
+        0% {
+          inset: -70px;
+          opacity: 0;
+        }
+        30% {
+          opacity: 1;
+        }
+        100% {
+          inset: 0;
+          opacity: 1;
+        }
+      }
+      body.lock .ttl::before {
+        animation-play-state: paused;
+      }
+      .l {
+        display: inline-block;
+        animation:
+          dev 1.3s cubic-bezier(0.2, 0.7, 0.2, 1) both,
+          wave 4.5s ease-in-out infinite;
+        animation-delay: calc(0.4s + var(--i) * 70ms), calc(3s + var(--i) * 130ms);
+      }
+      @keyframes dev {
+        0% {
+          opacity: 0;
+          filter: blur(20px);
+          transform: translateY(46px) scale(1.5);
+          color: var(--ac);
+        }
+        55% {
+          opacity: 1;
+          filter: blur(4px);
+        }
+        100% {
+          opacity: 1;
+          filter: blur(0);
+          transform: none;
+        }
+      }
+      @keyframes wave {
+        0%,
+        30%,
+        100% {
+          color: var(--fg);
+          text-shadow: none;
+        }
+        15% {
+          color: var(--ac);
+          text-shadow: 0 0 26px var(--ac);
+          transform: translateY(-6px);
+        }
+      }
+      .w {
+        display: inline-block;
+        animation: foc 0.9s ease-out both;
+        animation-delay: calc(1.6s + var(--k) * 70ms);
+      }
+      @keyframes foc {
+        from {
+          opacity: 0;
+          filter: blur(12px);
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          filter: none;
+          transform: none;
+        }
+      }
+      /* ===== Resumo (cartões de estações e fluxo) ===== */
+      .rs-g {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 1.2rem;
+        margin-top: 2rem;
+      }
+      a.rs {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+        transition:
+          transform 0.3s,
+          border-color 0.3s;
+      }
+      a.rs:hover,
+      a.rs:focus-visible {
+        transform: translateY(-6px);
+        border-color: var(--ac);
+        outline: none;
+      }
+      a.rs p {
+        color: var(--mut);
+        margin: 0;
+        font-size: 0.98rem;
+      }
+      a.rs .tag {
+        font-size: 0.85rem;
+      }
+      .flow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        align-items: center;
+        margin-top: 2rem;
+      }
+      .flow i {
+        font-style: normal;
+        color: var(--mut);
+      }
+      .flow span {
+        padding: 0.4rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        animation: hl 7.5s infinite;
+        animation-delay: calc(var(--n) * 1.5s);
+      }
+      @keyframes hl {
+        0%,
+        20%,
+        100% {
+          background: transparent;
+          color: var(--fg);
+        }
+        4%,
+        16% {
+          background: var(--ac);
+          color: var(--bg);
+        }
+      }
+      #resumo {
+        padding-top: 3.5rem;
+        padding-bottom: 1rem;
+      }
+      #e1 {
+        padding-top: 3rem;
+      }
+      #resumo .rs-g {
+        margin-top: 1.2rem;
+        gap: 1rem;
+      }
+      #resumo .flow {
+        margin-top: 1.4rem;
+      }
+      #resumo h2 {
+        margin-bottom: 0.3em;
+      }
+      /* ===== Galeria de fotos e lightbox ===== */
+      .gl {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 1.6rem;
+        margin-top: 1.6rem;
+      }
+      .gl figure {
+        margin: 0;
+        background: #f2efe6;
+        padding: 10px 10px 36px;
+        border-radius: 3px;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+        position: relative;
+        cursor: zoom-in;
+        transition:
+          opacity 0.9s,
+          transform 0.35s,
+          box-shadow 0.35s;
+      }
+      .gl figure.rv.in {
+        transform: rotate(var(--rot, 0deg));
+      }
+      .gl figure.rv.in:hover,
+      .gl figure.rv.in:focus-visible {
+        transform: rotate(0) scale(1.06);
+        box-shadow: 0 22px 40px rgba(0, 0, 0, 0.5);
+        z-index: 2;
+        outline: none;
+      }
+      .gl .im {
+        aspect-ratio: 4/3;
+        background: var(--bg2);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+      .gl img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .gl figcaption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 8px;
+        text-align: center;
+        color: #222;
+        font:
+          italic 700 0.95rem Fraunces,
+          Georgia,
+          serif;
+      }
+      .gl .ph {
+        cursor: default;
+      }
+      .gl .ph .im {
+        border: 2px dashed var(--ac);
+        color: var(--mut);
+        font-size: 0.85rem;
+        text-align: center;
+      }
+      .gl .ph .im b {
+        display: block;
+        font-size: 2rem;
+        animation: bob 2s infinite;
+      }
+      .gbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        margin-top: 2rem;
+      }
+      #lb {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        background: rgba(0, 0, 0, 0.93);
+        display: none;
+        place-items: center;
+        padding: 1rem;
+      }
+      #lb.on {
+        display: grid;
+      }
+      #lb div {
+        text-align: center;
+      }
+      #lb img {
+        max-width: 92vw;
+        max-height: 78vh;
+        border-radius: 4px;
+        animation: zin 0.35s;
+      }
+      @keyframes zin {
+        from {
+          opacity: 0;
+          transform: scale(0.92);
+        }
+      }
+      #lb p {
+        color: #fff;
+        margin: 0.8rem auto 0;
+      }
+      .lbb {
+        position: absolute;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.14);
+        border-color: transparent;
+        font-size: 1.4rem;
+        line-height: 1;
+      }
+      .gl figure.nw {
+        animation: pop 0.6s backwards;
+        animation-delay: var(--d, 0s);
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: translateY(34px) scale(0.9);
+        }
+      }
+      #cap {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        padding: 0.3rem 0.8rem;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        border-radius: 99px;
+        font-size: 0.82rem;
+        line-height: 1.3;
+        text-align: center;
+        pointer-events: none;
+      }
+      #play {
+        margin-bottom: 0.4rem;
+      }
+      body {
+        overflow-x: clip;
+      }
+      /* ===== Galeria em carrossel ===== */
+      .gw {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        overflow: hidden;
+        padding: 2rem 0 2.4rem;
+        margin-top: 1rem;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+        mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+      }
+      .gl.gt {
+        display: flex;
+        width: max-content;
+        gap: 0;
+        margin: 0;
+        animation: gs 55s linear infinite;
+      }
+      .gw:hover .gt,
+      .gw:focus-within .gt {
+        animation-play-state: paused;
+      }
+      @keyframes gs {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      .gt figure {
+        flex: none;
+        width: min(78vw, 440px);
+        margin: 0 1.8rem 0 0;
+      }
+      /* ===== Movimento reduzido ===== */
+      @media (prefers-reduced-motion: reduce) {
+        body > *:not(#intro):not(.mq):not(.hero):not(#resumo):not(#galeria):not(#lb):not(#e1),
+        body > *:not(#intro):not(.mq):not(.hero):not(#resumo):not(#galeria):not(#lb):not(#e1) * {
+          animation: none !important;
+          transition: none !important;
+        }
+        .rv {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      /* capa inicial */
+      #capa {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 2rem 1.2rem;
+        background: radial-gradient(ellipse at 50% 40%, #12325a 0%, #0c2340 45%, #050505 100%);
+        color: #f2efe6;
+        transition:
+          opacity 0.6s ease,
+          visibility 0.6s;
+        overflow: hidden;
+      }
+      #capa.out {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #capa .cv {
+        position: relative;
+        z-index: 1;
+        max-width: 820px;
+      }
+      #capa .ev {
+        display: block;
+        font:
+          700 clamp(0.95rem, 2.6vw, 1.2rem)/1 'DM Sans',
+          sans-serif;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: #f2a93b;
+        margin-bottom: 1.4rem;
+        animation: capaIn 1s 0.1s both;
+      }
+      #capa h1 {
+        font:
+          700 clamp(3rem, 13vw, 8rem)/1 Fraunces,
+          Georgia,
+          serif;
+        margin: 0;
+        animation: capaIn 1s 0.3s both;
+      }
+      #capa .tm {
+        display: inline-block;
+        margin-top: 1.6rem;
+        padding: 0.55rem 1.4rem;
+        border: 1px solid rgba(242, 239, 230, 0.3);
+        border-radius: 99px;
+        font:
+          500 clamp(1rem, 3vw, 1.3rem)/1.2 'DM Sans',
+          sans-serif;
+        color: #a9bad0;
+        animation: capaIn 1s 0.55s both;
+      }
+      #capa .tm b {
+        color: #f2efe6;
+      }
+      #capa .go {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 2.6rem auto 0;
+        padding: 0.95rem 2.4rem;
+        border-radius: 99px;
+        border: 0;
+        background: #f2a93b;
+        color: #0c2340;
+        font:
+          700 1.15rem/1 'DM Sans',
+          sans-serif;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        animation:
+          capaIn 1s 0.8s both,
+          capaPulse 2.4s 2s infinite;
+        transition:
+          transform 0.2s,
+          background 0.2s;
+      }
+      #capa .go:hover {
+        transform: scale(1.06);
+        background: #ffbf5c;
+      }
+      #capa .go:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 4px;
+      }
+      #capa .ring {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(120vmin, 900px);
+        aspect-ratio: 1;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        border: 1px solid rgba(242, 239, 230, 0.08);
+        box-shadow:
+          0 0 0 8vmin rgba(242, 239, 230, 0.03),
+          0 0 0 16vmin rgba(242, 239, 230, 0.025);
+        pointer-events: none;
+      }
+      @keyframes capaIn {
+        from {
+          opacity: 0;
+          transform: translateY(22px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes capaPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(242, 169, 59, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 0 14px rgba(242, 169, 59, 0);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #capa,
+        #capa * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      /* seletor de tema */
+      #tema {
+        position: fixed;
+        z-index: 11;
+        top: calc(0.5rem + env(safe-area-inset-top, 0px));
+        right: 0.8rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--bg2);
+        color: var(--ac);
+        border: 1px solid var(--line);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        transition:
+          transform 0.25s,
+          border-color 0.25s,
+          background 0.4s,
+          color 0.4s;
+      }
+      #tema:hover {
+        transform: rotate(18deg) scale(1.08);
+      }
+      #tema svg {
+        width: 1.3rem;
+        height: 1.3rem;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      #tema .lua {
+        display: none;
+      }
+      #tema.dk .sol {
+        display: none;
+      }
+      #tema.dk .lua {
+        display: block;
+      }
+      nav {
+        padding-right: 3.6rem;
+      }
+      body,
+      nav,
+      .card,
+      .q,
+      .hero {
+        transition:
+          background-color 0.4s,
+          color 0.4s,
+          border-color 0.4s;
+      }
+    </style>
+  </head>
+  <body class="lock">
+    <!-- Capa inicial com botão Iniciar -->
+    <div id="capa" role="dialog" aria-label="Capa">
+      <div class="ring"></div>
+      <div class="cv">
+        <span class="ev">Fisqui 2026</span>
+        <h1>Fotografia</h1>
+        <div class="tm"><b>3º ano B</b></div>
+        <br /><button class="go" id="iniciar" autofocus>▶ Iniciar</button>
+      </div>
+    </div>
+    <!-- Animação de abertura (câmera) -->
+    <div id="intro" role="presentation">
+      <div class="vw">
+        <canvas id="ic" width="960" height="600"></canvas>
+        <div class="g3"></div>
+        <div class="hud">
+          <span>M</span><span>1/125 &nbsp; f/2.8 &nbsp; ISO 100</span><span><i>●</i> 24MP</span>
+        </div>
+        <div class="af"></div>
+        <div class="ok">foco travado</div>
+        <div class="mt"><span class="mk"></span></div>
+      </div>
+      <div class="sh t"></div>
+      <div class="sh b"></div>
+      <div class="fl2"></div>
+      <button class="sk" id="skip">Pular</button>
+    </div>
+    <!-- Botão de tema claro/escuro -->
+    <button id="tema" type="button" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+      <svg class="sol" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" />
+        <path
+          d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+        /></svg
+      ><svg class="lua" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+      </svg>
+    </button>
+    <!-- Barra de progresso de rolagem -->
+    <div id="bar"></div>
+    <!-- Menu de navegação -->
+    <nav aria-label="Estações">
+      <a href="#resumo">Resumo</a><a href="#e1">Química</a><a href="#e2">Física</a
+      ><a href="#e3">Olho humano</a><a href="#e4">Digital</a><a href="#galeria">Galeria</a
+      ><a href="#fim">Conclusão</a><a href="#" id="again">↻ Rever abertura</a>
+    </nav>
+
+    <!-- VLibras (widget de acessibilidade) -->
+    <div vw class="enabled">
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+      </div>
+    </div>
+
+    <!-- Cabeçalho / hero -->
+    <header class="hero">
+      <svg id="iris" viewBox="0 0 400 400" aria-hidden="true">
+        <g fill="none" stroke="currentColor" style="color: var(--ac)" stroke-width="2">
+          <circle cx="200" cy="200" r="190" />
+          <circle cx="200" cy="200" r="120" opacity=".5" />
+          <g class="bl">
+            <path d="M200 10 L290 200 L200 130Z" />
+            <path d="M390 200 L200 290 L270 200Z" />
+            <path d="M200 390 L110 200 L200 270Z" />
+            <path d="M10 200 L200 110 L130 200Z" />
+            <path d="M330 70 L280 250 L240 170Z" />
+            <path d="M70 330 L120 150 L160 230Z" />
+          </g>
+        </g>
+      </svg>
+      <!-- Mantenha o título e o parágrafo em uma linha: o script separa as palavras do parágrafo por espaço -->
+      <div class="ttl"><h1>Da luz<br>à fotografia</h1><p>Quatro estações para entender como uma imagem nasce: química, física, biologia e tecnologia trabalhando juntas.</p></div>
+      <div class="flash"></div>
+      <div class="scroll" aria-hidden="true">role para explorar ↓</div>
+    </header>
+    <!-- Faixa animada (marquee) -->
+    <div class="mq" role="img" aria-label="FISQUI 2026, Fotografia, 3° Ano B">
+      <div class="tk" aria-hidden="true">
+        <span>FISQUI 2026</span><span>●</span><span>Fotografia</span><span>●</span><span>3° Ano B</span
+        ><span>●</span><span>FISQUI 2026</span><span>●</span><span>Fotografia</span><span>●</span
+        ><span>3° Ano B</span><span>●</span><span>FISQUI 2026</span><span>●</span><span>Fotografia</span
+        ><span>●</span><span>3° Ano B</span><span>●</span><span>FISQUI 2026</span><span>●</span
+        ><span>Fotografia</span><span>●</span><span>3° Ano B</span><span>●</span><span>FISQUI 2026</span
+        ><span>●</span><span>Fotografia</span><span>●</span><span>3° Ano B</span><span>●</span
+        ><span>FISQUI 2026</span><span>●</span><span>Fotografia</span><span>●</span><span>3° Ano B</span
+        ><span>●</span>
+      </div>
+    </div>
+
+    <!-- Resumo do trabalho -->
+    <section id="resumo" class="rv">
+      <span class="tag">Sobre o trabalho</span>
+      <h2>O que vamos apresentar</h2>
+      <p>
+        Este trabalho mostra como uma fotografia nasce. Ela surgiu da necessidade de registrar imagens de
+        forma permanente e é resultado da união entre História, Química, Física, Biologia e Tecnologia. Para
+        contar essa história, o trabalho tem quatro estações que seguem o caminho da luz.
+      </p>
+      <div class="rs-g">
+        <a class="card rs" href="#e1"
+          ><span class="tag">Estação 1</span>
+          <h3>História e Química</h3>
+          <p>
+            Da câmera escura ao filme: sais de prata, revelação e fixação transformam a luz em imagem
+            permanente.
+          </p></a
+        >
+        <a class="card rs" href="#e2"
+          ><span class="tag">Estação 2</span>
+          <h3>Física</h3>
+          <p>
+            Como a lente, o foco, a abertura e a velocidade do obturador controlam a luz que chega à câmera.
+          </p></a
+        >
+        <a class="card rs" href="#e3"
+          ><span class="tag">Estação 3</span>
+          <h3>Olho humano</h3>
+          <p>O caminho da luz da córnea à retina e as semelhanças e diferenças entre o olho e a câmera.</p></a
+        >
+        <a class="card rs" href="#e4"
+          ><span class="tag">Estação 4</span>
+          <h3>Câmeras digitais</h3>
+          <p>Sensor, pixels e processamento: a luz vira informação digital, inclusive nos celulares.</p></a
+        >
+      </div>
+      <div class="flow" aria-label="Caminho da luz">
+        <span style="--n: 0">Luz</span><i>→</i><span style="--n: 1">Química</span><i>→</i
+        ><span style="--n: 2">Física</span><i>→</i><span style="--n: 3">Olho</span><i>→</i
+        ><span style="--n: 4">Digital</span>
+      </div>
+    </section>
+    <!-- Estação 1: História e Química -->
+    <section id="e1" class="rv">
+      <span class="tag">Estação 1</span>
+      <h2>História e Química da Fotografia</h2>
+      <p>
+        A fotografia surgiu da necessidade de registrar imagens de forma permanente, sem depender só do
+        desenho ou da pintura. Antes dela já existia a câmera escura, que projetava a imagem do exterior em
+        uma superfície. No século XIX, pesquisadores descobriram substâncias químicas sensíveis à luz, e isso
+        permitiu preservar a imagem.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3>Revelação passo a passo</h3>
+          <div class="wrap">
+            <canvas id="c1" width="480" height="300"></canvas>
+            <div id="fog"></div>
+            <div id="cap"></div>
+          </div>
+          <div class="steps" id="steps"></div>
+          <button id="play" type="button">▶ Ver a revelação completa</button>
+          <p id="stxt" style="min-height: 5.5em; color: var(--mut)"></p>
+        </div>
+        <div>
+          <h3>Linha do tempo</h3>
+          <div class="tl">
+            <div><b>Câmera escura</b><br />Projeta uma imagem externa, mas não a guarda.</div>
+            <div><b>Século XIX</b><br />Sais de prata mostram que a luz altera a matéria.</div>
+            <div>
+              <b>Filme fotográfico</b><br />Exposição, revelação e fixação tornam o processo repetível.
+            </div>
+            <div><b>Hoje</b><br />Processos mais rápidos, práticos e acessíveis.</div>
+          </div>
+          <blockquote>A fotografia começou como uma combinação de luz, óptica e reações químicas.</blockquote>
+        </div>
+      </div>
+      <div class="q">
+        <b>Próxima pergunta:</b> conseguimos registrar a luz em uma superfície. Mas como ela chega até lá e
+        forma uma imagem?
+      </div>
+    </section>
+
+    <!-- Estação 2: Física -->
+    <section id="e2" class="rv">
+      <span class="tag">Estação 2</span>
+      <h2>Física na Fotografia</h2>
+      <p>
+        Sem luz não existe fotografia. A lente direciona e focaliza os raios por refração, e a imagem formada
+        dentro da câmera é real, invertida e geralmente menor que o objeto.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3>Objeto → luz → lente → imagem</h3>
+          <svg
+            class="demo"
+            viewBox="0 0 400 220"
+            style="background: var(--bg2)"
+            aria-label="Diagrama de lente"
+          >
+            <style>
+              .r {
+                stroke: #f2a93b;
+                stroke-width: 2;
+                fill: none;
+                stroke-dasharray: 8 6;
+                animation: fw 1.2s linear infinite;
+              }
+              @keyframes fw {
+                to {
+                  stroke-dashoffset: -14;
+                }
+              }
+            </style>
+            <line x1="10" y1="110" x2="390" y2="110" stroke="#889" stroke-dasharray="3 5" />
+            <path d="M45 110V60" stroke="#7fd" stroke-width="5" />
+            <path d="M45 60l-6 10h12z" fill="#7fd" />
+            <path
+              d="M200 30c-24 40-24 120 0 160c24-40 24-120 0-160z"
+              fill="rgba(150,210,255,.35)"
+              stroke="#9cf"
+              stroke-width="2"
+            />
+            <path class="r" d="M45 60H200L340 165" />
+            <path class="r" d="M45 60L200 110L340 165" />
+            <path d="M340 110V165" stroke="#f77" stroke-width="5" />
+            <path d="M340 165l-6-10h12z" fill="#f77" />
+            <text x="20" y="40" fill="#7fd" font-size="13">objeto</text>
+            <text x="165" y="22" fill="#9cf" font-size="13">lente</text>
+            <text x="300" y="195" fill="#f77" font-size="13">imagem invertida</text>
+          </svg>
+          <p style="color: var(--mut); margin-top: 1rem">
+            O foco é ajustado movendo a lente até a imagem se formar exatamente sobre o sensor ou filme.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Abertura e velocidade</h3>
+          <div class="scene" id="scene">
+            <div class="sun"></div>
+            <div class="ball" id="ball"></div>
+          </div>
+          <label
+            >Abertura: <span id="ap">média</span><input id="ab" type="range" min="0" max="100" value="50"
+          /></label>
+          <label
+            >Tempo do obturador: <span id="sh">rápido</span
+            ><input id="sp" type="range" min="0" max="100" value="5"
+          /></label>
+          <p id="res" style="margin-top: 0.8rem; color: var(--mut)"></p>
+        </div>
+      </div>
+      <blockquote>
+        A câmera utiliza princípios da Física para controlar, direcionar e registrar a luz.
+      </blockquote>
+      <div class="q">
+        <b>Próxima pergunta:</b> e como os nossos próprios olhos captam e interpretam a luz?
+      </div>
+    </section>
+
+    <!-- Estação 3: Olho humano -->
+    <section id="e3" class="rv">
+      <span class="tag">Estação 3</span>
+      <h2>O olho humano e a fotografia</h2>
+      <p>
+        A luz refletida pelos objetos entra pela córnea, passa pela pupila e pelo cristalino e chega à retina,
+        cujas células sensíveis enviam sinais nervosos ao cérebro.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3>Pupila = abertura</h3>
+          <svg class="demo" viewBox="0 0 300 200" style="background: var(--bg2)" aria-label="Pupila">
+            <ellipse cx="150" cy="100" rx="130" ry="70" fill="#f2efe6" />
+            <circle cx="150" cy="100" r="58" fill="#3f7fb5" />
+            <circle
+              cx="150"
+              cy="100"
+              r="58"
+              fill="none"
+              stroke="#1d4f7a"
+              stroke-width="4"
+              stroke-dasharray="2 6"
+            />
+            <circle id="pup" cx="150" cy="100" r="30" fill="#000" style="transition: r 0.3s" />
+            <circle cx="135" cy="82" r="7" fill="#fff" opacity=".8" />
+          </svg>
+          <label>Quantidade de luz<input id="lz" type="range" min="0" max="100" value="50" /></label>
+          <p style="color: var(--mut); margin-top: 0.8rem">
+            Pouca luz: a pupila abre. Muita luz: ela fecha. A câmera faz o mesmo com a abertura do diafragma.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Olho × câmera</h3>
+          <div class="eyewrap" id="eyec"></div>
+          <p style="margin-top: 1rem; color: var(--mut)">
+            Diferença importante: a câmera só registra a luz. O olho envia informação ao cérebro, que processa
+            e interpreta o que vemos.
+          </p>
+        </div>
+      </div>
+      <blockquote>
+        A câmera foi inspirada em princípios semelhantes aos da visão, mas enxergar envolve muito mais do que
+        captar uma imagem.
+      </blockquote>
+      <div class="q"><b>Próxima pergunta:</b> como transformamos essa luz em uma fotografia digital?</div>
+    </section>
+
+    <!-- Estação 4: Câmeras digitais -->
+    <section id="e4" class="rv">
+      <span class="tag">Estação 4</span>
+      <h2>Câmeras digitais</h2>
+      <p>
+        Na câmera digital, a luz atravessa a lente e é captada por um sensor eletrônico com milhões de
+        pequenas áreas sensíveis. Cada uma vira um pixel, com informação de cor e brilho.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3>Explore os pixels</h3>
+          <canvas id="c4" width="480" height="300"></canvas>
+          <label
+            >Resolução: <span id="px">480</span> px de largura<input
+              id="rs"
+              type="range"
+              min="6"
+              max="480"
+              value="24"
+          /></label>
+          <p style="margin-top: 0.8rem; color: var(--mut)">
+            Mais pixels permitem mais resolução, mas mais megapixels não significam automaticamente uma foto
+            melhor.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Caminho da imagem</h3>
+          <ul class="list">
+            <li><b>Lente</b>: direciona a luz.</li>
+            <li><b>Sensor</b>: converte luz em dados.</li>
+            <li><b>Processador</b>: transforma os dados em imagem.</li>
+            <li><b>Memória</b>: guarda as fotos.</li>
+            <li><b>Tela e flash</b>: visualizar e iluminar.</li>
+          </ul>
+          <p style="margin-top: 1rem; color: var(--mut)">
+            Nos celulares, software ajuda a melhorar exposição, cores, nitidez e redução de ruído.
+          </p>
+        </div>
+      </div>
+      <blockquote>
+        Na fotografia digital, a luz deixa de ser registrada em um filme químico e passa a ser transformada em
+        informação digital.
+      </blockquote>
+    </section>
+
+    <!-- Galeria de fotos -->
+    <section id="galeria" class="rv">
+      <span class="tag">3° Ano B</span>
+      <h2>Galeria de Fotos do Terceirão</h2>
+      <p>
+        Registros da turma ao longo do ano, utilizando a Fotografia. Clique em uma foto para ampliar; passe o mouse para pausar.
+      </p>
+      <div class="gw"><div class="gl gt" id="gl"></div></div>
+    </section>
+    <!-- Conclusão -->
+    <section id="fim" class="rv" style="text-align: center">
+      <h2>Uma só história</h2>
+      <p style="margin: auto">
+        A fotografia é resultado da união entre História, Química, Física, Biologia e Tecnologia. Da luz ao
+        filme, da lente ao olho, do sensor ao pixel.
+      </p>
+    </section>
+    <!-- Rodapé -->
+    <div class="foot">FISQUI 2026 · Fotografia · 3° Ano B</div>
+    <!-- Lightbox da galeria -->
+    <div id="lb" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+      <div>
+        <img id="lbi" alt="" />
+        <p id="lbc"></p>
+      </div>
+      <button class="lbb" id="lbx" style="top: 1rem; right: 1rem" aria-label="Fechar">✕</button
+      ><button class="lbb" id="lbp" style="left: 1rem; top: 50%" aria-label="Foto anterior">‹</button
+      ><button class="lbb" id="lbn" style="right: 1rem; top: 50%" aria-label="Próxima foto">›</button>
+    </div>
+    <!-- VLibras (acessibilidade em Libras) -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+      new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <!-- Script principal -->
+    <script>
+      const $ = (id) => document.getElementById(id);
+      // título e subtítulo animados
+      {
+        let i = 0;
+        const h = document.querySelector('.hero h1');
+        h.setAttribute('aria-label', 'Da luz à fotografia');
+        h.innerHTML = ['Da luz', 'à fotografia']
+          .map((t) =>
+            [...t]
+              .map((c) =>
+                c === ' ' ? ' ' : `<span class="l" aria-hidden="true" style="--i:${i++}">${c}</span>`,
+              )
+              .join(''),
+          )
+          .join('<br>');
+        const p = document.querySelector('.hero p');
+        p.innerHTML = p.textContent
+          .split(' ')
+          .map((w, k) => `<span class="w" style="--k:${k}">${w}</span>`)
+          .join(' ');
+      }
+      // seletor de tema claro/escuro
+      (function () {
+        const b = document.getElementById('tema'),
+          r = document.documentElement,
+          mq = matchMedia('(prefers-color-scheme:light)');
+        const cur = () => r.getAttribute('data-theme') || (mq.matches ? 'light' : 'dark');
+        const sync = () => {
+          const d = cur() === 'dark';
+          b.classList.toggle('dk', d);
+          b.setAttribute('aria-pressed', d);
+          b.title = d ? 'Mudar para tema claro' : 'Mudar para tema escuro';
+        };
+        b.onclick = () => {
+          const n = cur() === 'dark' ? 'light' : 'dark';
+          r.setAttribute('data-theme', n);
+          try {
+            localStorage.setItem('tema', n);
+          } catch (e) {}
+          sync();
+        };
+        mq.addEventListener && mq.addEventListener('change', sync);
+        sync();
+      })();
+      // animação de abertura
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      const introHTML = $('intro').outerHTML,
+        rm = matchMedia('(prefers-reduced-motion:reduce)').matches;
+      let done = true,
+        tm;
+      function endIntro() {
+        if (done) return;
+        done = true;
+        clearTimeout(tm);
+        const i = $('intro');
+        i && i.remove();
+        document.body.classList.remove('lock');
+        // após a abertura, sempre mostrar o início ("Da luz à fotografia")
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        $('bar').style.width = '0';
+      }
+      function startIntro(first) {
+        if (!first) {
+          document.body.insertAdjacentHTML('afterbegin', introHTML);
+          scrollTo(0, 0);
+        }
+        done = false;
+        document.body.classList.add('lock');
+        const i = $('intro');
+        scene(i.querySelector('#ic').getContext('2d'), 960, 600);
+        i.addEventListener('animationend', (e) => {
+          if (e.target === i) endIntro();
+        });
+        $('skip').onclick = endIntro;
+        const go = () => {
+          i.classList.add('go');
+          tm = setTimeout(endIntro, 5200);
+        };
+        const run = () => {
+          if (document.visibilityState === 'visible') go();
+          else
+            document.addEventListener('visibilitychange', function f() {
+              if (document.visibilityState === 'visible') {
+                document.removeEventListener('visibilitychange', f);
+                go();
+              }
+            });
+        };
+        if (first) {
+          const c = $('capa');
+          $('iniciar').onclick = () => {
+            c.classList.add('out');
+            setTimeout(() => c.remove(), 650);
+            run();
+          };
+          $('iniciar').focus();
+        } else run();
+      }
+      startIntro(true);
+      $('again').onclick = (e) => {
+        e.preventDefault();
+        endIntro();
+        startIntro(false);
+      };
+      // barra de progresso e revelação
+      addEventListener('scroll', () => {
+        $('bar').style.width = (100 * scrollY) / (document.documentElement.scrollHeight - innerHeight) + '%';
+      });
+      const io = new IntersectionObserver(
+        (es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')),
+        { threshold: 0.12 },
+      );
+      document.querySelectorAll('.rv').forEach((e) => io.observe(e));
+      // cena desenhada
+      function scene(g, w, h) {
+        let s = g.createLinearGradient(0, 0, 0, h * 0.65);
+        s.addColorStop(0, '#1e3a8a');
+        s.addColorStop(1, '#fbbf6a');
+        g.fillStyle = s;
+        g.fillRect(0, 0, w, h);
+        g.fillStyle = '#fff3b0';
+        g.beginPath();
+        g.arc(w * 0.7, h * 0.35, h * 0.13, 0, 7);
+        g.fill();
+        g.fillStyle = '#4b5563';
+        g.beginPath();
+        g.moveTo(0, h);
+        g.lineTo(0, h * 0.7);
+        g.lineTo(w * 0.25, h * 0.45);
+        g.lineTo(w * 0.45, h * 0.68);
+        g.lineTo(w * 0.68, h * 0.5);
+        g.lineTo(w, h * 0.72);
+        g.lineTo(w, h);
+        g.fill();
+        g.fillStyle = '#1f2937';
+        g.fillRect(0, h * 0.82, w, h * 0.18);
+        g.fillStyle = '#e24a33';
+        g.fillRect(w * 0.15, h * 0.7, w * 0.05, h * 0.13);
+      }
+      const c1 = $('c1'),
+        g1 = c1.getContext('2d');
+      scene(g1, 480, 300);
+      c1.style.filter = 'grayscale(1) contrast(1.2)';
+      c1.style.opacity = 0;
+      c1.style.transition = 'opacity 3.5s ease-in';
+      const S = [
+        [
+          'Exposição',
+          'A luz atinge o filme de cristais de brometo de prata e forma uma imagem latente, que ainda não conseguimos ver.',
+        ],
+        [
+          'Revelação',
+          'O revelador provoca uma reação de redução: os compostos de prata expostos viram prata metálica, que forma as regiões escuras.',
+        ],
+        ['Interrupção', 'Um banho geralmente ácido interrompe a ação do revelador.'],
+        [
+          'Fixação',
+          'O tiossulfato remove os cristais não utilizados, formando complexos solúveis de prata. Após a lavagem, resta a imagem de prata metálica.',
+        ],
+      ];
+      S.forEach((s, i) => {
+        const b = document.createElement('button');
+        b.textContent = s[0];
+        b.setAttribute('aria-pressed', i == 0);
+        b.onclick = () => step(i);
+        $('steps').append(b);
+      });
+      const CP = [
+        'Imagem latente: a luz já agiu, mas ainda não dá para ver',
+        'Revelador: a prata exposta vira prata metálica',
+        'Banho de interrupção: a revelação é parada',
+        'Fixador: os cristais não usados saem e a imagem fica permanente',
+      ];
+      let pt;
+      function step(i, keep) {
+        if (!keep) clearTimeout(pt);
+        [...$('steps').children].forEach((b, j) => b.setAttribute('aria-pressed', j == i));
+        $('stxt').textContent = S[i][1];
+        $('cap').textContent = CP[i];
+        const f = $('fog');
+        if (i == 1) {
+          c1.style.transition = 'none';
+          c1.style.opacity = 0;
+          f.style.transition = 'none';
+          f.style.opacity = 0.95;
+          void c1.offsetWidth;
+        }
+        c1.style.transition = i == 1 ? 'opacity 4s ease-in' : 'opacity .6s';
+        f.style.transition = i == 1 ? 'opacity 4s ease-in' : i == 3 ? 'opacity 2.5s' : 'opacity .6s';
+        c1.style.opacity = i == 0 ? 0 : 1;
+        f.style.opacity = [0.95, 0.5, 0.5, 0][i];
+      }
+      $('play').onclick = () => {
+        clearTimeout(pt);
+        (function q(k) {
+          step(k, 1);
+          if (k < 3) pt = setTimeout(() => q(k + 1), k == 1 ? 4600 : 2800);
+        })(0);
+      };
+      step(0);
+      // abertura x obturador
+      function ex() {
+        const a = +$('ab').value,
+          t = +$('sp').value,
+          l = 0.25 + (a / 100) * 1.4 * (0.6 + t / 100);
+        $('scene').style.filter = `brightness(${Math.min(l, 2.2)})`;
+        $('ball').style.filter = `blur(${t * 0.16}px)`;
+        $('ap').textContent = a < 33 ? 'pequena' : a < 66 ? 'média' : 'grande';
+        $('sh').textContent = t < 25 ? 'rápido' : t < 60 ? 'médio' : 'lento';
+        $('res').textContent =
+          l > 1.5
+            ? 'Foto clara demais: entrou luz demais.'
+            : l < 0.6
+              ? 'Foto escura: entrou pouca luz.'
+              : t > 50
+                ? 'Foto borrada: o obturador ficou aberto durante o movimento.'
+                : 'Exposição equilibrada e bola nítida.';
+      }
+      $('ab').oninput = $('sp').oninput = ex;
+      ex();
+      // olho x câmera
+      const P = [
+        ['Córnea/cristalino', 'Lente'],
+        ['Pupila', 'Abertura'],
+        ['Íris', 'Controle da abertura'],
+        ['Retina', 'Sensor/filme'],
+        ['Cérebro', 'Processamento da imagem'],
+      ];
+      P.forEach((p) => {
+        const r = document.createElement('div');
+        r.className = 'eyewrap';
+        r.style.gridColumn = '1/-1';
+        r.innerHTML = `<div class="row">${p[0]}</div><div class="row">${p[1]}</div>`;
+        r.onmouseenter = r.onfocus = () => [...r.children].forEach((c) => c.classList.add('on'));
+        r.onmouseleave = r.onblur = () => [...r.children].forEach((c) => c.classList.remove('on'));
+        r.tabIndex = 0;
+        $('eyec').append(r);
+      });
+      $('lz').oninput = (e) => $('pup').setAttribute('r', 52 - e.target.value * 0.4);
+      // pixels
+      const c4 = $('c4'),
+        g4 = c4.getContext('2d'),
+        o = document.createElement('canvas');
+      function px() {
+        const w = +$('rs').value,
+          h = Math.round(w * 0.625);
+        o.width = w;
+        o.height = h;
+        scene(o.getContext('2d'), w, h);
+        g4.imageSmoothingEnabled = false;
+        g4.drawImage(o, 0, 0, 480, 300);
+        $('px').textContent = w;
+      }
+      $('rs').oninput = px;
+      px();
+      // galeria
+      // Fotos da galeria (arquivos na pasta img/). Para adicionar mais, inclua uma linha: {src:'img/foto8.jpeg',legenda:'Legenda'}
+      const FOTOS = [
+        { src: 'img/foto1.jpeg', legenda: 'Chegada do Moletom e Camisa' },
+        { src: 'img/foto2.jpeg', legenda: 'Trote de Profissões' },
+        { src: 'img/foto3.jpeg', legenda: 'Trote de Trolls' },
+        { src: 'img/foto4.jpeg', legenda: 'Atividade no Bosque' },
+        { src: 'img/foto5.jpeg', legenda: 'Trote de Personagens' },
+        { src: 'img/foto6.jpeg', legenda: 'Trote de Datas Comemorativas' },
+        { src: 'img/foto7.jpeg', legenda: 'Festa Junina' },
+      ];
+      {
+        const gl = $('gl'),
+          lb = $('lb');
+        let cur = 0;
+        const L = Array.from(
+          { length: FOTOS.length || 8 },
+          (_, i) => FOTOS[i] || { ph: 1, legenda: 'Foto ' + (i + 1) },
+        );
+        function fig(f, i, dup) {
+          const fg = document.createElement('figure');
+          fg.className = 'rv' + (f.ph ? ' ph' : '');
+          fg.style.setProperty('--rot', ((i % 3) - 1) * 2 + 'deg');
+          const im = document.createElement('div');
+          im.className = 'im';
+          if (f.ph) im.innerHTML = '<span><b>📷</b>sua foto aqui</span>';
+          else {
+            const g = document.createElement('img');
+            g.src = f.src;
+            g.alt = dup ? '' : f.legenda || '';
+            g.loading = 'lazy';
+            im.append(g);
+            fg.onclick = () => gShow(i);
+            if (!dup) {
+              fg.tabIndex = 0;
+              fg.onkeydown = (e) => {
+                if (e.key === 'Enter') gShow(i);
+              };
+            }
+          }
+          const c = document.createElement('figcaption');
+          c.textContent = f.legenda || '';
+          fg.append(im, c);
+          if (dup) fg.setAttribute('aria-hidden', 'true');
+          io.observe(fg);
+          return fg;
+        }
+        [0, 1].forEach((d) => L.forEach((f, i) => gl.append(fig(f, i, d))));
+        function gShow(i) {
+          cur = i;
+          $('lbi').src = FOTOS[i].src;
+          $('lbc').textContent = FOTOS[i].legenda || '';
+          lb.classList.add('on');
+          document.body.style.overflow = 'hidden';
+        }
+        function gHide() {
+          lb.classList.remove('on');
+          document.body.style.overflow = '';
+        }
+        function gStep(d) {
+          gShow((cur + d + FOTOS.length) % FOTOS.length);
+        }
+        $('lbx').onclick = gHide;
+        $('lbp').onclick = () => gStep(-1);
+        $('lbn').onclick = () => gStep(1);
+        lb.onclick = (e) => {
+          if (e.target === lb) gHide();
+        };
+        addEventListener('keydown', (e) => {
+          if (!lb.classList.contains('on')) return;
+          if (e.key === 'Escape') gHide();
+          if (e.key === 'ArrowLeft') gStep(-1);
+          if (e.key === 'ArrowRight') gStep(1);
+        });
+      }
+    </script>
+  </body>
+</html>
