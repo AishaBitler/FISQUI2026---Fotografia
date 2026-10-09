@@ -1274,6 +1274,104 @@
           color 0.4s,
           border-color 0.4s;
       }
+      /* ===== Cabine fotográfica (botão elaborado) ===== */
+      .cabine {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-top: 3rem;
+        padding: 1.8rem 2rem;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .cabine::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--ac) 22%, transparent), transparent 55%);
+        pointer-events: none;
+      }
+      .tira {
+        display: grid;
+        gap: 0.5rem;
+        padding: 0.7rem 0.6rem;
+        background: #111;
+        border-radius: 6px;
+        transform: rotate(-4deg);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+        transition: transform 0.4s;
+        position: relative;
+      }
+      .tira i {
+        display: grid;
+        place-items: center;
+        width: 62px;
+        height: 48px;
+        border-radius: 3px;
+        font-style: normal;
+        font-size: 1.3rem;
+        background: linear-gradient(135deg, #f2efe6, #cfc7b0);
+        filter: grayscale(1) contrast(1.1);
+      }
+      .tira i:nth-child(2) { background: linear-gradient(135deg, #e8e2d0, #a9a187); }
+      .tira i:nth-child(3) { background: linear-gradient(135deg, #d8d2bd, #8d856c); }
+      .tira i:nth-child(4) { background: linear-gradient(135deg, #c8c2ac, #6f6853); }
+      .cabine:hover .tira { transform: rotate(0deg) scale(1.05); }
+      .cabine-txt { position: relative; flex: 1 1 280px; }
+      .cabine-txt h3 { margin-bottom: 0.3rem; }
+      .cabine-txt p { color: var(--mut); margin-bottom: 1.2rem; }
+      .btn-cabine {
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.85rem 1.7rem;
+        background: var(--ac);
+        color: #0c2340;
+        border: 1px solid var(--ac);
+        border-radius: 99px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--ac) 55%, transparent);
+        animation: pulso 2.6s infinite;
+        transition: transform 0.25s, background 0.25s, color 0.25s;
+      }
+      .btn-cabine::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -80%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+        transform: skewX(-20deg);
+      }
+      .btn-cabine:hover,
+      .btn-cabine:focus-visible {
+        transform: translateY(-3px);
+        outline: none;
+        animation: none;
+      }
+      .btn-cabine:hover::after,
+      .btn-cabine:focus-visible::after {
+        left: 130%;
+        transition: left 0.7s;
+      }
+      .btn-cabine .seta { transition: transform 0.25s; }
+      .btn-cabine:hover .seta { transform: translateX(5px); }
+      @keyframes pulso {
+        70% { box-shadow: 0 0 0 14px transparent; }
+        100% { box-shadow: 0 0 0 0 transparent; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .btn-cabine { animation: none; }
+        .tira, .cabine:hover .tira { transform: none; }
+      }
     </style>
   </head>
   <body class="lock">
@@ -1626,6 +1724,19 @@
         Registros da turma ao longo do ano, utilizando a Fotografia. Clique em uma foto para ampliar; passe o mouse para pausar.
       </p>
       <div class="gw"><div class="gl gt" id="gl"></div></div>
+
+      <!-- Cabine fotográfica: troque COLE_O_LINK_AQUI pelo link das fotos -->
+      <div class="cabine rv">
+        <div class="tira" aria-hidden="true"><i>📷</i><i>😄</i><i>🤪</i><i>🥳</i></div>
+        <div class="cabine-txt">
+          <span class="tag">Cabine fotográfica</span>
+          <h3>Reviva os melhores momentos do evento</h3>
+          <p>As fotos tiradas na cabine fotográfica estão reunidas em um álbum. Encontre a sua e baixe os registros!</p>
+          <a class="btn-cabine" href="COLE_O_LINK_AQUI" target="_blank" rel="noopener noreferrer">
+             Ver fotos da cabine <span class="seta" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
     </section>
     <!-- Conclusão -->
     <section id="fim" class="rv" style="text-align: center">
